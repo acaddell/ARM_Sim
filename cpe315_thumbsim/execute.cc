@@ -117,7 +117,7 @@ void execute() {
   Thumb_Types itype;
   unsigned int pctarget = PC + 2;
   unsigned int addr;
-  int diff, BitCount, bit;
+  int diff, BitCount, bit, reg, negImm;
 
   /* Convert instruction to correct type */
   ALU_Type alu(instr);
@@ -170,6 +170,13 @@ void execute() {
           rf.write(alu.instr.mov.rdn, alu.instr.mov.imm);
           break;
         case ALU_CMP:
+          reg = rf[alu.instr.cmp.rdn];
+          negImm = alu.instr.cmp.imm;
+          negImm = -negImm;
+          flags.N = reg + negImm < 0;
+          flags.Z = !(reg + negImm);
+          flags.V = (reg > 0 && negImm > 0 && reg + negImm < 0) || (reg < 0 && negImm < 0 && reg + negImm > 0);
+          flags.C = 0;
           break;
         case ALU_ADD8I:
           rf.write(alu.instr.add8i.rdn, rf[alu.instr.add8i.rdn] + alu.instr.add8i.imm);
