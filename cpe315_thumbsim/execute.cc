@@ -224,9 +224,24 @@ void execute() {
       misc_ops = decode(misc);
       switch(misc_ops) {
         case MISC_PUSH:
+          for(int i = 0; i < 8; i++) {
+            if(1 << i & misc.instr.pop.reg_list) {
+              SP = SP + 4;
+              dmem.write(SP, rf[i]);
+            }
+          }
           break;
         case MISC_POP:
+<<<<<<< HEAD
           
+=======
+          for(int i = 0; i < 8; i++) {
+            if(1 << i & misc.instr.push.reg_list) {
+              rf.write(i, dmem[SP]);
+              SP = SP - 4;
+            }
+          }
+>>>>>>> 64c44cfcb4bdfb2d8eb717cfc6d83d720207323f
           break;
         case MISC_SUB:
           rf.write(SP_REG, SP - (misc.instr.sub.imm*4));
