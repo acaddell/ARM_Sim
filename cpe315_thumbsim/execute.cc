@@ -22,36 +22,89 @@ ASPR flags;
 static int checkCondition(unsigned short cond) {
   switch(cond) {
     case EQ:
-      if (flags.Z == 1) {
+      if (flags.Z) {
         return TRUE;
       }
       break;
+
     case NE:
+      if (!flags.Z) {
+        return TRUE;
+      }
       break;
+
     case CS:
+      if (flags.C) {
+        return TRUE;
+      }
       break;
+
     case CC:
+      if (!flags.C) {
+        return TRUE;
+      }
       break;
+
     case MI:
+      if (flags.N) {
+        return TRUE;
+      }
       break;
+
     case PL:
+      if (!flags.N) {
+        return TRUE;
+      }
       break;
+
     case VS:
+      if (flags.V) {
+        return TRUE;
+      }
       break;
+
     case VC:
+      if (!flags.V) {
+        return TRUE;
+      }
       break;
+
     case HI:
+      if (flags.C && !flags.Z) {
+        return TRUE;
+      }
       break;
+
     case LS:
+      if (!flags.C || flags.Z) {
+        return TRUE;
+      }
       break;
+
     case GE:
+      if (flags.N == flags.V) {
+        return TRUE;
+      }
       break;
+
     case LT:
+      if (flags.N != flags.V) {
+        return TRUE;
+      }
       break;
+
     case GT:
+      if (!flags.Z && flags.N == flags.V) {
+        return TRUE;
+      }
       break;
+
     case LE:
+      if (flags.Z || flags.N != flags.V) {
+        return TRUE;
+      }
       break;
+
     case AL:
       return TRUE;
       break;
