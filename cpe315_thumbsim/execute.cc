@@ -189,7 +189,8 @@ void execute() {
       }
       break;
     case DP:
-      decode(dp);
+      dp_ops = decode(dp);
+      
       break;
     case SPECIAL:
       sp_ops = decode(sp);
