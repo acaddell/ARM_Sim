@@ -226,6 +226,7 @@ void execute() {
         case MISC_PUSH:
           break;
         case MISC_POP:
+          
           break;
         case MISC_SUB:
           rf.write(SP_REG, SP - (misc.instr.sub.imm*4));
@@ -245,7 +246,7 @@ void execute() {
       break;
     case UNCOND:
       decode(uncond);
-      rf.write(PC_REG, PC + 2 * signExtend8to32ui(cond.instr.b.imm) + 2);
+      rf.write(PC_REG, PC + 2 * signExtend16to32ui(uncond.instr.b.imm) + 2);
       break;
     case LDM:
       decode(ldm);
