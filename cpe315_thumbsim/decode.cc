@@ -76,19 +76,19 @@ ALU_Ops decode (const ALU_Type data) {
       if (opts.instrs) { 
          cout << "lsls r" << data.instr.addr.rd  << ", r" << data.instr.addr.rm << ", #" << data.instr.addr.imm << endl;
       }
-      return ALI_LSLI;
+      return ALU_LSLI;
    }
    else if (data.instr.lsri.op == ALU_LSRI_OP) {
       if (opts.instrs) { 
          cout << "lsrs r" << data.instr.addr.rd  << ", r" << data.instr.addr.rm << ", #" << data.instr.addr.imm << endl;
       }
-      return ALI_LSRI;
+      return ALU_LSRI;
    }
    else if (data.instr.asri.op == ALU_ASRI_OP) {
       if (opts.instrs) { 
          cout << "asrs r" << data.instr.addr.rd  << ", r" << data.instr.addr.rm << ", #" << data.instr.addr.imm << endl;
       }
-      return ALI_ASRI;
+      return ALU_ASRI;
    }
    else if (data.instr.addr.op == ALU_ADDR_OP) {
       if (opts.instrs) { 
