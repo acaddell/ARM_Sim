@@ -74,19 +74,19 @@ Thumb_Types decode (const ALL_Types data) {
 ALU_Ops decode (const ALU_Type data) {
    if (data.instr.lsli.op == ALU_LSLI_OP) {
       if (opts.instrs) { 
-         cout << "lsls r" << data.instr.addr.rd  << ", r" << data.instr.addr.rm << ", #" << data.instr.addr.imm << endl;
+         cout << "lsls r" << data.instr.lsli.rd  << ", r" << data.instr.lsli.rm << ", #" << data.instr.lsli.imm << endl;
       }
       return ALU_LSLI;
    }
    else if (data.instr.lsri.op == ALU_LSRI_OP) {
       if (opts.instrs) { 
-         cout << "lsrs r" << data.instr.addr.rd  << ", r" << data.instr.addr.rm << ", #" << data.instr.addr.imm << endl;
+         cout << "lsrs r" << data.instr.lsli.rd  << ", r" << data.instr.lsli.rm << ", #" << data.instr.lsli.imm << endl;
       }
       return ALU_LSRI;
    }
    else if (data.instr.asri.op == ALU_ASRI_OP) {
       if (opts.instrs) { 
-         cout << "asrs r" << data.instr.addr.rd  << ", r" << data.instr.addr.rm << ", #" << data.instr.addr.imm << endl;
+         cout << "asrs r" << data.instr.lsli.rd  << ", r" << data.instr.lsli.rm << ", #" << data.instr.lsli.imm << endl;
       }
       return ALU_ASRI;
    }
