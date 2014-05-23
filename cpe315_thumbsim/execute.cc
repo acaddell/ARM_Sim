@@ -265,7 +265,7 @@ void execute() {
       break;
     case UNCOND:
       decode(uncond);
-      rf.write(PC_REG, PC + 2 * signExtend16to32ui(uncond.instr.b.imm) + 2);
+      rf.write(PC_REG, PC + 2 * signExtend16to32ui(uncond.instr.b.imm));
       break;
     case LDM:
       decode(ldm);
