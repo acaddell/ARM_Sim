@@ -224,27 +224,27 @@ void execute() {
       misc_ops = decode(misc);
       switch(misc_ops) {
         case MISC_PUSH:
-          for(int i = 0; i < 8; i++) {
-            if(1 << i & misc.instr.pop.reg_list) {
-              rf.write(SP_REG, SP + 4);
+          if (misc.instr.push.m) {
+            rf.write(SP_REG, SP - 4);
+            dmem.write(SP, LR);
+          }
+          for(int i = 7; i >= 0; i--) {
+            if(1 << i & misc.instr.push.reg_list) {
+              rf.write(SP_REG, SP - 4);
               dmem.write(SP, rf[i]);
             }
-          }
-          if (misc.instr.pop.m) {
-            rf.write(SP_REG, SP + 4);
-            dmem.write(SP, LR);
           }
           break;
         case MISC_POP:
           for(int i = 0; i < 8; i++) {
-            if(1 << i & misc.instr.push.reg_list) {
+            if(1 << i & misc.instr.pop.reg_list) {
               rf.write(i, dmem[SP]);
-              rf.write(SP_REG, SP - 4);
+              rf.write(SP_REG, SP + 4);
             }
           }
           if (misc.instr.pop.m) {
-            rf.write(PC, dmem[SP]);
-            rf.write(SP_REG, SP - 4);
+            rf.write(PC_REG, dmem[SP]);
+            rf.write(SP_REG, SP + 4);
           }
           break;
         case MISC_SUB:
@@ -265,7 +265,7 @@ void execute() {
       break;
     case UNCOND:
       decode(uncond);
-      rf.write(PC_REG, PC + 2 * signExtend16to32ui(uncond.instr.b.imm) + 2);
+      rf.write(PC_REG, PC + 2 * signExtend16to32ui(uncond.instr.b.imm));
       break;
     case LDM:
       decode(ldm);
