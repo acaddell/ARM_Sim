@@ -226,17 +226,25 @@ void execute() {
         case MISC_PUSH:
           for(int i = 0; i < 8; i++) {
             if(1 << i & misc.instr.pop.reg_list) {
-              SP = SP + 4;
+              rf.write(SP_REG, SP + 4);
               dmem.write(SP, rf[i]);
             }
+          }
+          if (misc.instr.pop.m) {
+            rf.write(SP_REG, SP + 4);
+            dmem.write(SP, LR);
           }
           break;
         case MISC_POP:
           for(int i = 0; i < 8; i++) {
             if(1 << i & misc.instr.push.reg_list) {
               rf.write(i, dmem[SP]);
-              SP = SP - 4;
+              rf.write(SP_REG, SP - 4);
             }
+          }
+          if (misc.instr.pop.m) {
+            rf.write(PC, dmem[SP]);
+            rf.write(SP_REG, SP - 4);
           }
           break;
         case MISC_SUB:
