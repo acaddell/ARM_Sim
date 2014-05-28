@@ -116,7 +116,7 @@ void execute() {
   Data16 instr = imem[PC];
   Thumb_Types itype;
   unsigned int pctarget = PC + 2;
-  unsigned int addr;
+  unsigned int addri;
   int diff, BitCount, bit, reg, negImm;
 
   /* Convert instruction to correct type */
@@ -269,9 +269,15 @@ void execute() {
       break;
     case LDM:
       decode(ldm);
+      
       break;
     case STM:
       decode(stm);
+      for(int i = 0; i < 8; ++i) {
+         if(1 << i & stm.instr.reg_list) {
+            dmem.write(rf[ldm.instr.rn] - i * 4, rf[i]);
+         }
+      }
       break;
     case LDRL:
       decode(ldrl);
