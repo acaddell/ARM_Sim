@@ -190,7 +190,27 @@ void execute() {
       break;
     case DP:
       dp_ops = decode(dp);
-      
+      switch(dp_ops) {
+        case DP_RSB:
+          break;
+
+        case DP_ADC:
+          break;
+
+        case DP_ORR:
+          rf.write(dp.instr.rdn, rf[dp.instr.rdn] | rf[dp.instr.rm]);
+          flags.N = rf[dp.instr.rdn] < 0;
+          flags.Z = !(rf[dp.instr.rdn]);
+          break;
+
+        case DP_TST:
+          flags.N = rf[dp.instr.rdn] && rf[dp.instr.rm] < 0;
+          flags.Z = !(rf[dp.instr.rdn] && rf[dp.instr.rm]);
+          break;
+
+        default:
+          break;
+      }
       break;
     case SPECIAL:
       sp_ops = decode(sp);
@@ -235,6 +255,7 @@ void execute() {
             }
           }
           break;
+
         case MISC_POP:
           for(int i = 0; i < 8; i++) {
             if(1 << i & misc.instr.pop.reg_list) {
@@ -247,9 +268,11 @@ void execute() {
             rf.write(SP_REG, SP + 4);
           }
           break;
+
         case MISC_SUB:
           rf.write(SP_REG, SP - (misc.instr.sub.imm*4));
           break;
+
         case MISC_ADD:
           rf.write(SP_REG, SP + (misc.instr.add.imm*4));
           break;
