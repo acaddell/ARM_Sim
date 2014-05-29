@@ -1,3 +1,4 @@
+./thumbsim -i -d -s -f inputs/fib.sim
 Starting at PC 83ec
 push {r7, lr}
 sub sp, #16
