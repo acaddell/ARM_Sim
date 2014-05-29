@@ -16,7 +16,7 @@ unsigned int signExtend8to32ui(char i) {
 
 ASPR flags;
 
-/*void setCarryOverflow (int num1, int num2, OFType oftype) {
+void setCarryOverflow (int num1, int num2, OFType oftype) {
    switch (oftype) {
    case OF_ADD:
       if (((unsigned long long int)num1 + (unsigned long long int)num2) ==
@@ -68,7 +68,7 @@ ASPR flags;
       cerr << "Bad OverFlow Type encountered." << __LINE__ << __FILE__ << endl;
       exit(1);
    }
-}*/
+}
 
 // You're given the code for evaluating BEQ, 
 // and you'll need to fill in the rest of these.
@@ -172,7 +172,7 @@ void execute() {
    unsigned int pctarget = PC + 2;
    unsigned int addri;
    int diff, BitCount, bit;
-
+   
    /* Convert instruction to correct type */
    ALU_Type alu(instr);
    SP_Type sp(instr);
@@ -193,6 +193,7 @@ void execute() {
    MISC_Ops misc_ops;
 
    rf.write(PC_REG, pctarget);
+
 
    itype = decode(ALL_Types(instr));
    switch(itype) {
@@ -224,9 +225,9 @@ void execute() {
          rf.write(alu.instr.mov.rdn, alu.instr.mov.imm);
          break;
       case ALU_CMP:
-         flags.N = rf[alu.instr.cmp.rdn] - alu.instr.cmp.imm < 0;
-         flags.Z = !(rf[alu.instr.cmp.rdn] - alu.instr.cmp.imm);
-         //setCarryOverflow(rf[alu.instr.cmp.rdn], alu.instr.cmp.imm, OF_SUB);
+         flags.N = (int)(rf[alu.instr.cmp.rdn]) - (int)(alu.instr.cmp.imm) < 0;
+         flags.Z = !((int)(rf[alu.instr.cmp.rdn]) - (int)(alu.instr.cmp.imm));
+         setCarryOverflow(rf[alu.instr.cmp.rdn], alu.instr.cmp.imm, OF_SUB);
          break;
       case ALU_ADD8I:
          rf.write(alu.instr.add8i.rdn, rf[alu.instr.add8i.rdn] + alu.instr.add8i.imm);
@@ -344,11 +345,11 @@ void execute() {
       break;
    case STM:
       decode(stm);
-      /*for(int i = 0; i < 8; ++i) {
+      for(int i = 0; i < 8; ++i) {
          if(1 << i & stm.instr.stm.reg_list) {
             dmem.write(rf[stm.instr.stm.rn] - i * 4, rf[i]);
          }
-      }*/
+      }
       break;
    case LDRL:
       decode(ldrl);
