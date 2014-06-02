@@ -170,7 +170,7 @@ void execute() {
    Data16 instr = imem[PC];
    Thumb_Types itype;
    unsigned int pctarget = PC + 2;
-   unsigned int addri;
+   unsigned int addri, ndx;
    int diff, BitCount, bit;
    
    /* Convert instruction to correct type */
@@ -340,19 +340,32 @@ void execute() {
       rf.write(PC_REG, PC + 2 * signExtend16to32ui(uncond.instr.b.imm) + 2);
       break;
    case LDM:
+      ndx = 0;
       decode(ldm);
-
-      break;
-   case STM:
-      decode(stm);
-      for(int i = 0; i < 8; ++i) {
-         if(1 << i & stm.instr.stm.reg_list) {
-            dmem.write(rf[stm.instr.stm.rn] - i * 4, rf[i]);
+      addri = ldm.instr.ldm.rn;
+      for (int i = 0; i < 8; ++i) {
+         if (1 << i & ldm.instr.ldm.reg_list) {
+            rf.write(dmem[addri + ndx++ * 4], i);
          }
       }
+      if (!(1 << ldm.instr.ldm.rn & ldm.instr.ldm.reg_list)) {
+         rf.write(ldm.instr.ldm.rn, addri + ndx * 4);
+      }
+      break;
+   case STM:
+      ndx = 0;
+      decode(stm);
+      for (int i = 0; i < 8; ++i) {
+         if (1 << i & stm.instr.stm.reg_list) {
+            dmem.write(rf[stm.instr.stm.rn] - ndx++ * 4, rf[i]);
+         }
+      }
+      rf.write(stm.instr.stm.rn, rf[stm.instr.stm.rn] - ndx * 4);
       break;
    case LDRL:
       decode(ldrl);
+      // does the immediate account for word size already?
+      rf.write(ldrl.instr.ldrl.rt, dmem[PC + ldrl.instr.ldrl.imm * 4]);
       break;
    case ADD_SP:
       decode(addsp);
