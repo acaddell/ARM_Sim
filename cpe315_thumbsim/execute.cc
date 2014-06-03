@@ -170,8 +170,9 @@ void execute() {
    Data16 instr = imem[PC];
    Thumb_Types itype;
    unsigned int pctarget = PC + 2;
-   unsigned int addri, ndx;
+   unsigned int addri, ndx, addr, result, dest;
    int diff, BitCount, bit;
+   Data32 temp(0);
    
    /* Convert instruction to correct type */
    ALU_Type alu(instr);
@@ -267,11 +268,18 @@ void execute() {
       sp_ops = decode(sp);
       switch(sp_ops) {
       case SP_MOV:
-         if (sp.instr.mov.d) {
-            rf.write(SP_REG, rf[sp.instr.mov.rm]);
+         rf.write(sp.instr.mov.rd + (sp.instr.mov.d ? 8 : 0), rf[sp.instr.mov.rm]);
+         break;
+      case SP_CMP:
+         if (sp.instr.cmp.d) {
          }
          else {
-            rf.write(sp.instr.mov.rd, rf[sp.instr.mov.rm]);
+         }
+         break;
+      case SP_ADD:
+         if (sp.instr.add.d) {
+         }
+         else {
          }
          break;
       }
@@ -286,6 +294,26 @@ void execute() {
          break;
       case LDRR:
          rf.write(ld_st.instr.ld_st_imm.rt, dmem[rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4]);
+         break;
+      case STRBR:
+         addr = rf[ld_st.instr.ld_st_reg.rn] + rf[ld_st.instr.ld_st_reg.rm];
+         temp = dmem[addr];
+         temp.set_data_ubyte4(0, rf[ld_st.instr.ld_st_reg.rt] & 0xff);
+         dmem.write(addr, temp);
+         break;
+      case STRBI:
+         addr = rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4;
+         temp = dmem[addr];
+         temp.set_data_ubyte4(0, rf[ld_st.instr.ld_st_imm.rt] & 0xff);
+         dmem.write(addr, temp);
+         break;
+      case LDRBR:
+         addr = rf[ld_st.instr.ld_st_reg.rn] + rf[ld_st.instr.ld_st_reg.rm];
+         rf.write(ld_st.instr.ld_st_reg.rt, dmem[addr] & 0xff);
+         break;
+      case LDRBI:
+         addr = rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm;
+         rf.write(ld_st.instr.ld_st_imm.rt, dmem[addr] & 0xff);
          break;
       }
       break;
@@ -357,15 +385,14 @@ void execute() {
       decode(stm);
       for (int i = 0; i < 8; ++i) {
          if (1 << i & stm.instr.stm.reg_list) {
-            dmem.write(rf[stm.instr.stm.rn] - ndx++ * 4, rf[i]);
+            dmem.write(rf[stm.instr.stm.rn] + ndx++ * 4, rf[i]);
          }
       }
       rf.write(stm.instr.stm.rn, rf[stm.instr.stm.rn] - ndx * 4);
       break;
    case LDRL:
       decode(ldrl);
-      // does the immediate account for word size already?
-      rf.write(ldrl.instr.ldrl.rt, dmem[PC + ldrl.instr.ldrl.imm * 4]);
+      
       break;
    case ADD_SP:
       decode(addsp);
