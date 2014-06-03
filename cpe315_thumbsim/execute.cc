@@ -171,7 +171,7 @@ void execute() {
    Thumb_Types itype;
    unsigned int pctarget = PC + 2;
    unsigned int addri, ndx;
-   int diff, BitCount, bit;
+   int diff, BitCount, bit, temp;
    
    /* Convert instruction to correct type */
    ALU_Type alu(instr);
@@ -243,9 +243,18 @@ void execute() {
       dp_ops = decode(dp);
       switch(dp_ops) {
       case DP_RSB:
+         rf.write(dp.instr.DP_Instr.rdn, -rf[dp.instr.DP_Instr.rm]);
+         flags.N = rf[dp.instr.DP_Instr.rdn] < 0;
+         flags.Z = !rf[dp.instr.DP_Instr.rdn];
+         setCarryOverflow(0, rf[dp.instr.DP_Instr.rm], OF_SUB);
          break;
 
       case DP_ADC:
+         temp = rf[dp.instr.DP_Instr.rdn];
+         rf.write(dp.instr.DP_Instr.rdn, rf[dp.instr.DP_Instr.rdn] + rf[dp.instr.DP_Instr.rm] + flags.C);
+         flags.N = rf[dp.instr.DP_Instr.rdn] < 0;
+         flags.Z = !rf[dp.instr.DP_Instr.rdn];
+         setCarryOverflow(temp, rf[dp.instr.DP_Instr.rm], OF_ADD);
          break;
 
       case DP_ORR:
@@ -255,6 +264,7 @@ void execute() {
          break;
 
       case DP_TST:
+         // Apparently only runs in -O3
          flags.N = rf[dp.instr.DP_Instr.rdn] && rf[dp.instr.DP_Instr.rm] < 0;
          flags.Z = !(rf[dp.instr.DP_Instr.rdn] && rf[dp.instr.DP_Instr.rm]);
          break;

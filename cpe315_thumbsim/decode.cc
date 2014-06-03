@@ -141,7 +141,24 @@ ALU_Ops decode (const ALU_Type data) {
 
 }
 DP_Ops decode (const DP_Type data) {
-   cout << "DP_TYPE" << endl;
+  if (data.instr.op == 9) {
+    if (opts.instrs) { 
+       cout << "rsbs r" << data.instr.rdn  << ", r" << data.instr.rm << ", #0" << endl;
+    }
+    return DP_RSB;
+  }
+  else if (data.instr.op == 5) {
+    if (opts.instrs) { 
+       cout << "adcs r" << data.instr.rdn  << ", r" << data.instr.rdn << ", r" << data.instr.rm << endl;
+    }
+    return DP_ADC;
+  }
+  else if (data.instr.op == 12) {
+    if (opts.instrs) { 
+       cout << "orrs r" << data.instr.rdn  << ", r" << data.instr.rdn << ", r" << data.instr.rm << endl;
+    }
+    return DP_ORR;
+  }
 }
 
 SP_Ops decode (const SP_Type data) {
