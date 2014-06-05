@@ -162,23 +162,39 @@ DP_Ops decode (const DP_Type data) {
 }
 
 SP_Ops decode (const SP_Type data) {
-   if (data.instr.mov.op == 2) {
-      if (opts.instrs) { 
-         cout << "mov";
-         if (data.instr.mov.d) {
-            cout << " sp, r" << data.instr.mov.rm << endl;
-         }
-         else {
-            cout << " r" << data.instr.mov.rd << ", r" << data.instr.mov.rm << endl;
-         }
+  if (data.instr.mov.op == 2) {
+    if (opts.instrs) { 
+        cout << "mov";
+        if (data.instr.mov.d) {
+          cout << " sp, r" << data.instr.mov.rm << endl;
+        }
+        else {
+          cout << " r" << data.instr.mov.rd << ", r" << data.instr.mov.rm << endl;
+        }
       }
       return SP_MOV;
-   }
-   else {
+    }
+    else if (data.instr.cmp.op == 1) {
+      if (opts.instrs) {
+        cout << "cmp ";
+        if (data.instr.mov.d) {
+          cout << "r" << data.instr.mov.rn*8 << ", r" << data.instr.mov.rm << endl;
+        }
+        else {
+          cout << " r" << data.instr.mov.rn << ", r" << data.instr.mov.rm << endl;
+        }
+      }
+    }
+    else if (data.instr.add.op == 0) {
+      if (opts.instrs) {
+        
+      }
+    }
+    else {
       if (opts.instrs) { 
          cout << "nop" << endl;
       }
-   }
+  }
 
 }
 LD_ST_Ops decode (const LD_ST_Type data) {
