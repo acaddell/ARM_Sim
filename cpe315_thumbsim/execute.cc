@@ -401,8 +401,24 @@ void execute() {
       rf.write(stm.instr.stm.rn, rf[stm.instr.stm.rn] - ndx * 4);
       break;
    case LDRL:
-      decode(ldrl);
+      decode(ldrl); 
+      // Need to check for alignment by 4
+      if (PC & 2) {
+        addr = PC + 2 + (ldrl.instr.ldrl.imm)*4;
+      }
+      else {
+        addr = PC + (ldrl.instr.ldrl.imm)*4;
+      }
+      // Requires two consecutive imem locations pieced together
+      temp = imem[addr] | (imem[addr+2]<<16);  // temp is a Data32
+      rf.write(ldrl.instr.ldrl.rt, temp);
       
+      // One write for updated reg
+      stats.numRegWrites++;
+      // One read of the PC
+      stats.numRegReads++;
+      // One mem read, even though it's imem, and there's two of them
+      stats.numMemReads++;
       break;
    case ADD_SP:
       decode(addsp);

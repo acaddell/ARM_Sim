@@ -373,7 +373,10 @@ int decode (const STM_Type data) {
 }
 
 int decode (const LDRL_Type data) {
-   cout << "LDRL_TYPE" << endl;
+   if (opts.instrs) { 
+      cout << "ldr " << data.instr.ldrl.rt << ", 0x" << hex << data.instr.ldrl.imm << endl;
+   }
+   return LDRL;
 }
 
 int decode (const ADD_SP_Type data) {
