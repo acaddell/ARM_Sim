@@ -281,19 +281,15 @@ void execute() {
       sp_ops = decode(sp);
       switch(sp_ops) {
       case SP_MOV:
-         rf.write(sp.instr.mov.rd + (sp.instr.mov.d ? 8 : 0), rf[sp.instr.mov.rm]);
+         rf.write(sp.instr.mov.rd + sp.instr.mov.d * 8, rf[sp.instr.mov.rm]);
          break;
       case SP_CMP:
-         if (sp.instr.cmp.d) {
-         }
-         else {
-         }
+         setCarryOverflow(sp.instr.cmp.rd + sp.instr.cmp.d * 8, sp.instr.cmp.rm, OF_SUB);
+         flags.N = sp.instr.cmp.rd + sp.instr.cmp.d * 8 - sp.instr.cmp.rm < 0;
+         flags.Z = sp.instr.cmp.rd + sp.instr.cmp.d * 8 - sp.instr.cmp.rm == 0;
          break;
       case SP_ADD:
-         if (sp.instr.add.d) {
-         }
-         else {
-         }
+         rf.write(sp.instr.add.rd + sp.instr.add.d * 8, rf[sp.instr.add.rd] + rf[sp.instr.add.rm]);
          break;
       }
       break;
