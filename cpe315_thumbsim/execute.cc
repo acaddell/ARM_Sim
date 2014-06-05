@@ -35,7 +35,10 @@ void setCarryOverflow (int num1, int num2, OFType oftype) {
       }
       break;
    case OF_SUB:
-      if (((unsigned long long int)num1 - (unsigned long long int)num2) ==
+      if (num1 >= num2) {
+         flags.C = 1;
+      }
+      else if (((unsigned long long int)num1 - (unsigned long long int)num2) ==
             ((unsigned int)num1 - (unsigned int)num2)) {
          flags.C = 0;
       }
