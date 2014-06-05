@@ -179,10 +179,10 @@ SP_Ops decode (const SP_Type data) {
       if (opts.instrs) {
         cout << "cmp ";
         if (data.instr.mov.d) {
-          cout << "r" << data.instr.mov.rn*8 << ", r" << data.instr.mov.rm << endl;
+          cout << "r" << data.instr.cmp.rn*8 << ", r" << data.instr.cmp.rm << endl;
         }
         else {
-          cout << " r" << data.instr.mov.rn << ", r" << data.instr.mov.rm << endl;
+          cout << " r" << data.instr.cmp.rn << ", r" << data.instr.cmp.rm << endl;
         }
       }
       return SP_CMP;
