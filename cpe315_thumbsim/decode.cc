@@ -141,7 +141,8 @@ ALU_Ops decode (const ALU_Type data) {
 
 }
 DP_Ops decode (const DP_Type data) {
-  if (data.instr.op == 9) {
+  cout << "LDM_TYPE" << endl;
+  /*if (data.instr.op == 9) {
     if (opts.instrs) { 
        cout << "rsbs r" << data.instr.rdn  << ", r" << data.instr.rm << ", #0" << endl;
     }
@@ -158,7 +159,7 @@ DP_Ops decode (const DP_Type data) {
        cout << "orrs r" << data.instr.rdn  << ", r" << data.instr.rdn << ", r" << data.instr.rm << endl;
     }
     return DP_ORR;
-  }
+  } */
 }
 
 SP_Ops decode (const SP_Type data) {
@@ -184,11 +185,13 @@ SP_Ops decode (const SP_Type data) {
           cout << " r" << data.instr.mov.rn << ", r" << data.instr.mov.rm << endl;
         }
       }
+      return SP_CMP;
     }
     else if (data.instr.add.op == 0) {
       if (opts.instrs) {
         
       }
+      return SP_ADD;
     }
     else {
       if (opts.instrs) { 
