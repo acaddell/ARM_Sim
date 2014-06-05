@@ -413,11 +413,11 @@ void execute() {
       rf.write(ldrl.instr.ldrl.rt, temp);
       
       // One write for updated reg
-      stats.numRegWrites++;
+      //stats.numRegWrites++;
       // One read of the PC
-      stats.numRegReads++;
+      //stats.numRegReads++;
       // One mem read, even though it's imem, and there's two of them
-      stats.numMemReads++;
+      //stats.numMemReads++;
       break;
    case ADD_SP:
       decode(addsp);
