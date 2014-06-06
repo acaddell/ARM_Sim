@@ -299,9 +299,13 @@ void execute() {
       ldst_ops = decode(ld_st);
       switch(ldst_ops) {
       case STRR:
-         dmem.write(rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4, rf[ld_st.instr.ld_st_imm.rt]);
          break;
       case LDRR:
+         break;
+      case STRI:
+         dmem.write(rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4, rf[ld_st.instr.ld_st_imm.rt]);
+         break;
+      case LDRI:
          rf.write(ld_st.instr.ld_st_imm.rt, dmem[rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4]);
          break;
       case STRBR:

@@ -166,31 +166,19 @@ DP_Ops decode (const DP_Type data) {
 SP_Ops decode (const SP_Type data) {
    if (data.instr.mov.op == 2) {
       if (opts.instrs) { 
-         cout << "mov";
-         if (data.instr.mov.d) {
-            cout << " sp, r" << data.instr.mov.rm << endl;
-         }
-         else {
-            cout << " r" << data.instr.mov.rd << ", r" << data.instr.mov.rm << endl;
-         }
+         cout << "mov r" << data.instr.mov.rd + data.instr.mov.d * 8 << ", r" << data.instr.mov.rm << endl;
       }
       return SP_MOV;
    }
    else if (data.instr.cmp.op == 1) {
       if (opts.instrs) {
-         cout << "cmp ";
-         if (data.instr.mov.d) {
-            cout << "r" << data.instr.cmp.rd*8 << ", r" << data.instr.cmp.rm << endl;
-         }
-         else {
-            cout << " r" << data.instr.cmp.rd << ", r" << data.instr.cmp.rm << endl;
-         }
+         cout << "cmp r" << data.instr.cmp.rd + data.instr.cmp.d * 8 << ", r" << data.instr.cmp.rm << endl;
       }
       return SP_CMP;
    }
    else if (data.instr.add.op == 0) {
       if (opts.instrs) {
-
+         cout << "add r" << data.instr.add.rd + data.instr.add.d * 8 << ", r" << data.instr.add.rm << endl;
       }
       return SP_ADD;
    }
@@ -204,22 +192,22 @@ SP_Ops decode (const SP_Type data) {
 LD_ST_Ops decode (const LD_ST_Type data) {
    if (data.instr.class_type.opA == LD_ST_REG_OPA) {
       if (data.instr.class_type.opB == LD_ST_OPB_STR) {
-         return ST;
+         return STRR;
       }
       else if (data.instr.class_type.opB == LD_ST_OPB_LDR) {
-         return LD;
+         return LDRR;
       }
       else if (data.instr.class_type.opB == LD_ST_OPB_STRB) {
-
+         return STRBR;
       }
       else if (data.instr.class_type.opB == LD_ST_OPB_LDRB) {
-
+         return LDRBR;
       }
       else if (data.instr.class_type.opB == LD_ST_OPB_STRH) {
-
+         return STRHR;
       }
       else if (data.instr.class_type.opB == LD_ST_OPB_LDRH) {
-
+         return LDRHR;
       }
    }
    else if (data.instr.class_type.opA == LD_ST_IMM_OPA) {
@@ -227,42 +215,54 @@ LD_ST_Ops decode (const LD_ST_Type data) {
          if (opts.instrs) { 
             cout << "str r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm*4) << "]" << endl;
          }
-         return STRR;
+         return STRI;
       }
       else if (data.instr.class_type.opB == LD_ST_OPB_LDR) {
          if (opts.instrs) { 
             cout << "ldr r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm*4) << "]" << endl;
          }
-         return LDRR;
+         return LDRI;
       }
    }
    else if (data.instr.class_type.opA == LD_ST_IMMB_OPA) {
       if ((data.instr.class_type.opB >> 2) == LD_ST_ST) {
-         cout << "strb r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm) << "]" << endl;
+         if (opts.instrs) { 
+            cout << "strb r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm) << "]" << endl;
+         }
          return STRBI;
       }
       else if ((data.instr.class_type.opB >> 2) == LD_ST_LD) {
-         cout << "ldrb r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm) << "]" << endl;
+         if (opts.instrs) { 
+            cout << "ldrb r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm) << "]" << endl;
+         }
          return LDRBI;
       }
    }
    else if (data.instr.class_type.opA == LD_ST_IMMH_OPA) {
       if ((data.instr.class_type.opB >> 2) == LD_ST_ST) {
-         cout << "strh r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm*2) << "]" << endl;
+         if (opts.instrs) { 
+            cout << "strh r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm*2) << "]" << endl;
+         }
          return STRHI;
       }
       else if ((data.instr.class_type.opB >> 2) == LD_ST_LD) {
-         cout << "ldrh r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm*2) << "]" << endl;
+         if (opts.instrs) { 
+            cout << "ldrh r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm*2) << "]" << endl;
+         }
          return LDRHI;
       }
    }
    else if (data.instr.class_type.opA == LD_ST_IMMSP_OPA) {
       if ((data.instr.class_type.opB >> 2) == LD_ST_ST) {
-         cout << "str r" << data.instr.ld_st_imm.rt << ", [SP, #" << setbase(10) << (data.instr.ld_st_imm.imm*4) << "]" << endl;
+         if (opts.instrs) { 
+            cout << "str r" << data.instr.ld_st_imm.rt << ", [SP, #" << setbase(10) << (data.instr.ld_st_imm.imm*4) << "]" << endl;
+         }
          return STRSP;
       }
       else if ((data.instr.class_type.opB >> 2) == LD_ST_LD) {
-         cout << "ldr r" << data.instr.ld_st_imm.rt << ", [SP, #" << setbase(10) << (data.instr.ld_st_imm.imm*4) << "]" << endl;
+         if (opts.instrs) { 
+            cout << "ldr r" << data.instr.ld_st_imm.rt << ", [SP, #" << setbase(10) << (data.instr.ld_st_imm.imm*4) << "]" << endl;
+         }
          return LDRSP;
       }
    }
