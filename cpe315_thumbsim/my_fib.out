@@ -232,15 +232,15 @@ RF:
 0
 0
 0
-Total number of dynamic instructions: 0
+Total number of dynamic instructions: 160
 Total number of cycles: 0
   RType: 0
   IType: 0
   JType: 0
-Number of Memory Reads: 0
-Number of Memory Writes: 0
-Number of Register Reads: 0
-Number of Register Writes: 0
+Number of Memory Reads: 64
+Number of Memory Writes: 46
+Number of Register Reads: 132
+Number of Register Writes: 107
 Number of Forwards: 
   From Ex Stage: 0
   From Mem Stage: 0

@@ -1,6 +1,8 @@
 #include <iostream>
 #include <iomanip>
 #include "thumbsim.hpp"
+#define PC_REG 15
+#define PC rf[PC_REG]
 
 using namespace std;
 
@@ -142,7 +144,7 @@ ALU_Ops decode (const ALU_Type data) {
 }
 
 DP_Ops decode (const DP_Type data) {
-   cout << "LDM_TYPE" << endl;
+   //cout << "LDM_TYPE" << endl;
    if (data.instr.DP_Instr.op == 9) {
       if (opts.instrs) { 
          cout << "rsbs r" << data.instr.DP_Instr.rdn  << ", r" << data.instr.DP_Instr.rm << ", #0" << endl;
@@ -161,29 +163,104 @@ DP_Ops decode (const DP_Type data) {
       }
       return DP_ORR;
    }
+   else if (data.instr.DP_Instr.op == 8) {
+      if (opts.instrs) { 
+      }
+      return DP_TST;
+   }
+   else if (data.instr.DP_Instr.op == 0) {
+      if (opts.instrs) { 
+      }
+      return DP_AND;
+   }
+   else if (data.instr.DP_Instr.op == 1) {
+      if (opts.instrs) { 
+      }
+      return DP_EOR;
+   }
+   else if (data.instr.DP_Instr.op == 2) {
+      if (opts.instrs) { 
+      }
+      return DP_LSL;
+   }
+   else if (data.instr.DP_Instr.op == 3) {
+      if (opts.instrs) { 
+      }
+      return DP_LSR;
+   }
+   else if (data.instr.DP_Instr.op == 4) {
+      if (opts.instrs) { 
+      }
+      return DP_ASR;
+   }
+   else if (data.instr.DP_Instr.op == 6) {
+      if (opts.instrs) { 
+      }
+      return DP_SBC;
+   }
+   else if (data.instr.DP_Instr.op == 10) {
+      if (opts.instrs) { 
+      }
+      return DP_CMP;
+   }
+   else if (data.instr.DP_Instr.op == 11) {
+      if (opts.instrs) { 
+      }
+      return DP_CMN;
+   }
+   else if (data.instr.DP_Instr.op == 13) {
+      if (opts.instrs) { 
+      }
+      return DP_MUL;
+   }
+   else if (data.instr.DP_Instr.op == 14) {
+      if (opts.instrs) { 
+      }
+      return DP_BIC;
+   }
+   else if (data.instr.DP_Instr.op == 15) {
+      if (opts.instrs) { 
+      }
+      return DP_MVN;
+   }
 }
 
 SP_Ops decode (const SP_Type data) {
    if (data.instr.mov.op == 2) {
-      if (opts.instrs) { 
-         cout << "mov r" << data.instr.mov.rd + data.instr.mov.d * 8 << ", r" << data.instr.mov.rm << endl;
+      if (opts.instrs) {
+         if (13 == data.instr.mov.rd + data.instr.mov.d * 8) {
+            cout << "mov sp, r" << data.instr.mov.rm << endl;
+         }
+         else {
+            cout << "mov r" << data.instr.mov.rd + data.instr.mov.d * 8 << ", r" << data.instr.mov.rm << endl;
+         }
       }
       return SP_MOV;
    }
    else if (data.instr.cmp.op == 1) {
       if (opts.instrs) {
-         cout << "cmp r" << data.instr.cmp.rd + data.instr.cmp.d * 8 << ", r" << data.instr.cmp.rm << endl;
+         if (13 == data.instr.cmp.rd + data.instr.cmp.d * 8) {
+            cout << "cmp sp, r" << data.instr.cmp.rm << endl;
+         }
+         else {
+            cout << "cmp r" << data.instr.cmp.rd + data.instr.cmp.d * 8 << ", r" << data.instr.cmp.rm << endl;
+         }
       }
       return SP_CMP;
    }
    else if (data.instr.add.op == 0) {
       if (opts.instrs) {
-         cout << "add r" << data.instr.add.rd + data.instr.add.d * 8 << ", r" << data.instr.add.rm << endl;
+         if (13 == data.instr.add.rd + data.instr.add.d * 8) {
+            cout << "add sp, r" << data.instr.add.rm << endl;
+         }
+         else {
+            cout << "add r" << data.instr.add.rd + data.instr.add.d * 8 << ", r" << data.instr.add.rm << endl;
+         }
       }
       return SP_ADD;
    }
    else {
-      if (opts.instrs) { 
+      if (opts.instrs) {
          cout << "nop" << endl;
       }
    }
@@ -191,6 +268,7 @@ SP_Ops decode (const SP_Type data) {
 }
 LD_ST_Ops decode (const LD_ST_Type data) {
    if (data.instr.class_type.opA == LD_ST_REG_OPA) {
+      // might need to print ld/st reg instructions
       if (data.instr.class_type.opB == LD_ST_OPB_STR) {
          return STRR;
       }
@@ -427,11 +505,49 @@ int decode (const UNCOND_Type data) {
 }
 
 int decode (const LDM_Type data) {
-   cout << "LDM_TYPE" << endl;
+   if (opts.instrs) {
+      cout << "LDM r" << data.instr.ldm.rn;
+      if (data.instr.ldm.reg_list & 1 << data.instr.ldm.rn) {
+         cout << "!";
+      }
+      cout << ", {";
+      for (int i = 0, first = 1; i < 8; ++i) {
+         if (data.instr.ldm.reg_list & 1 << i) {
+            if (first) {
+               cout << "r" << i;
+            }
+            else {
+               cout << ", r" << i;
+            }
+         }
+      }
+      cout << "}";
+   }
+   //cout << "LDM_TYPE" << endl;
+   return LDM;
 }
 
 int decode (const STM_Type data) {
-   cout << "STM_TYPE" << endl;
+   if (opts.instrs) {
+      cout << "STM r" << data.instr.stm.rn;
+      if (data.instr.stm.reg_list & 1 << data.instr.stm.rn) {
+         cout << "!";
+      }
+      cout << ", {";
+      for (int i = 0, first = 1; i < 8; ++i) {
+         if (data.instr.stm.reg_list & 1 << i) {
+            if (first) {
+               cout << "r" << i;
+            }
+            else {
+               cout << ", r" << i;
+            }
+         }
+      }
+      cout << "}";
+   }
+   //cout << "STM_TYPE" << endl;
+   return STM;
 }
 
 int decode (const LDRL_Type data) {
@@ -445,4 +561,5 @@ int decode (const ADD_SP_Type data) {
    if (opts.instrs) { 
       cout << "add r" << data.instr.add.rd << ", sp, #" << data.instr.add.imm << endl;
    }
+   return ADD_SP;
 }

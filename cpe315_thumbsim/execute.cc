@@ -1,4 +1,5 @@
 #include "thumbsim.hpp"
+#include <stdio.h>
 #define PC_REG 15
 #define LR_REG 14
 #define SP_REG 13
@@ -197,7 +198,7 @@ void execute() {
    MISC_Ops misc_ops;
 
    rf.write(PC_REG, pctarget);
-   stats.instr++;
+   stats.instrs++;
 
    itype = decode(ALL_Types(instr));
    switch(itype) {
@@ -496,6 +497,7 @@ void execute() {
       break;
    default:
       cout << "[ERROR] Unknown Instruction to be executed" << endl;
+      cout << hex << instr.data_short() << endl;
       exit(1);
       break;
    }
