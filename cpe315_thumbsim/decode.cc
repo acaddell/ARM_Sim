@@ -142,63 +142,63 @@ ALU_Ops decode (const ALU_Type data) {
 }
 
 DP_Ops decode (const DP_Type data) {
-  cout << "LDM_TYPE" << endl;
-  if (data.instr.DP_Instr.op == 9) {
-    if (opts.instrs) { 
-       cout << "rsbs r" << data.instr.DP_Instr.rdn  << ", r" << data.instr.DP_Instr.rm << ", #0" << endl;
-    }
-    return DP_RSB;
-  }
-  else if (data.instr.DP_Instr.op == 5) {
-    if (opts.instrs) { 
-       cout << "adcs r" << data.instr.DP_Instr.rdn  << ", r" << data.instr.DP_Instr.rdn << ", r" << data.instr.DP_Instr.rm << endl;
-    }
-    return DP_ADC;
-  }
-  else if (data.instr.DP_Instr.op == 12) {
-    if (opts.instrs) { 
-       cout << "orrs r" << data.instr.DP_Instr.rdn  << ", r" << data.instr.DP_Instr.rdn << ", r" << data.instr.DP_Instr.rm << endl;
-    }
-    return DP_ORR;
-  }
+   cout << "LDM_TYPE" << endl;
+   if (data.instr.DP_Instr.op == 9) {
+      if (opts.instrs) { 
+         cout << "rsbs r" << data.instr.DP_Instr.rdn  << ", r" << data.instr.DP_Instr.rm << ", #0" << endl;
+      }
+      return DP_RSB;
+   }
+   else if (data.instr.DP_Instr.op == 5) {
+      if (opts.instrs) { 
+         cout << "adcs r" << data.instr.DP_Instr.rdn  << ", r" << data.instr.DP_Instr.rdn << ", r" << data.instr.DP_Instr.rm << endl;
+      }
+      return DP_ADC;
+   }
+   else if (data.instr.DP_Instr.op == 12) {
+      if (opts.instrs) { 
+         cout << "orrs r" << data.instr.DP_Instr.rdn  << ", r" << data.instr.DP_Instr.rdn << ", r" << data.instr.DP_Instr.rm << endl;
+      }
+      return DP_ORR;
+   }
 }
 
 SP_Ops decode (const SP_Type data) {
-  if (data.instr.mov.op == 2) {
-    if (opts.instrs) { 
-        cout << "mov";
-        if (data.instr.mov.d) {
-          cout << " sp, r" << data.instr.mov.rm << endl;
-        }
-        else {
-          cout << " r" << data.instr.mov.rd << ", r" << data.instr.mov.rm << endl;
-        }
+   if (data.instr.mov.op == 2) {
+      if (opts.instrs) { 
+         cout << "mov";
+         if (data.instr.mov.d) {
+            cout << " sp, r" << data.instr.mov.rm << endl;
+         }
+         else {
+            cout << " r" << data.instr.mov.rd << ", r" << data.instr.mov.rm << endl;
+         }
       }
       return SP_MOV;
-    }
-    else if (data.instr.cmp.op == 1) {
+   }
+   else if (data.instr.cmp.op == 1) {
       if (opts.instrs) {
-        cout << "cmp ";
-        if (data.instr.mov.d) {
-          cout << "r" << data.instr.cmp.rd*8 << ", r" << data.instr.cmp.rm << endl;
-        }
-        else {
-          cout << " r" << data.instr.cmp.rd << ", r" << data.instr.cmp.rm << endl;
-        }
+         cout << "cmp ";
+         if (data.instr.mov.d) {
+            cout << "r" << data.instr.cmp.rd*8 << ", r" << data.instr.cmp.rm << endl;
+         }
+         else {
+            cout << " r" << data.instr.cmp.rd << ", r" << data.instr.cmp.rm << endl;
+         }
       }
       return SP_CMP;
-    }
-    else if (data.instr.add.op == 0) {
+   }
+   else if (data.instr.add.op == 0) {
       if (opts.instrs) {
-        
+
       }
       return SP_ADD;
-    }
-    else {
+   }
+   else {
       if (opts.instrs) { 
          cout << "nop" << endl;
       }
-  }
+   }
 
 }
 LD_ST_Ops decode (const LD_ST_Type data) {
@@ -210,16 +210,16 @@ LD_ST_Ops decode (const LD_ST_Type data) {
          return LD;
       }
       else if (data.instr.class_type.opB == LD_ST_OPB_STRB) {
-         
+
       }
       else if (data.instr.class_type.opB == LD_ST_OPB_LDRB) {
-         
+
       }
       else if (data.instr.class_type.opB == LD_ST_OPB_STRH) {
-         
+
       }
       else if (data.instr.class_type.opB == LD_ST_OPB_LDRH) {
-         
+
       }
    }
    else if (data.instr.class_type.opA == LD_ST_IMM_OPA) {
@@ -271,122 +271,122 @@ LD_ST_Ops decode (const LD_ST_Type data) {
 MISC_Ops decode (const MISC_Type data) {
    if (data.instr.push.op == MISC_PUSH_OP) {
       if (opts.instrs) { 
-       bool multiple = FALSE;
-       cout << "push ";
-       cout << "{";
-       if (data.instr.push.reg_list & 1) {
-         cout << "r0";
-         multiple = TRUE;
-       }
-       if (data.instr.push.reg_list & 2) {
-         if (multiple)
-           cout << ", ";
-         cout << "r1";
-         multiple = TRUE;
-       }
-       if (data.instr.push.reg_list & 4) {
-         if (multiple)
-           cout << ", ";
-         cout << "r2";
-         multiple = TRUE;
-       }
-       if (data.instr.push.reg_list & 8) {
-         if (multiple)
-           cout << ", ";
-         cout << "r3";
-         multiple = TRUE;
-       }
-       if (data.instr.push.reg_list & 16) {
-         if (multiple)
-           cout << ", ";
-         cout << "r4";
-         multiple = TRUE;
-       }
-       if (data.instr.push.reg_list & 32) {
-         if (multiple)
-           cout << ", ";
-         cout << "r5";
-         multiple = TRUE;
-       }
-       if (data.instr.push.reg_list & 64) {
-         if (multiple)
-           cout << ", ";
-         cout << "r6";
-         multiple = TRUE;
-       }
-       if (data.instr.push.reg_list & 128) {
-         if (multiple)
-           cout << ", ";
-         cout << "r7";
-         multiple = TRUE;
-       }
-       if (data.instr.push.m) {
-         if (multiple)
-           cout << ", ";
-         cout << "lr";
-       }
-       cout << "}" << endl;
+         bool multiple = FALSE;
+         cout << "push ";
+         cout << "{";
+         if (data.instr.push.reg_list & 1) {
+            cout << "r0";
+            multiple = TRUE;
+         }
+         if (data.instr.push.reg_list & 2) {
+            if (multiple)
+               cout << ", ";
+            cout << "r1";
+            multiple = TRUE;
+         }
+         if (data.instr.push.reg_list & 4) {
+            if (multiple)
+               cout << ", ";
+            cout << "r2";
+            multiple = TRUE;
+         }
+         if (data.instr.push.reg_list & 8) {
+            if (multiple)
+               cout << ", ";
+            cout << "r3";
+            multiple = TRUE;
+         }
+         if (data.instr.push.reg_list & 16) {
+            if (multiple)
+               cout << ", ";
+            cout << "r4";
+            multiple = TRUE;
+         }
+         if (data.instr.push.reg_list & 32) {
+            if (multiple)
+               cout << ", ";
+            cout << "r5";
+            multiple = TRUE;
+         }
+         if (data.instr.push.reg_list & 64) {
+            if (multiple)
+               cout << ", ";
+            cout << "r6";
+            multiple = TRUE;
+         }
+         if (data.instr.push.reg_list & 128) {
+            if (multiple)
+               cout << ", ";
+            cout << "r7";
+            multiple = TRUE;
+         }
+         if (data.instr.push.m) {
+            if (multiple)
+               cout << ", ";
+            cout << "lr";
+         }
+         cout << "}" << endl;
       }
       return MISC_PUSH;
    }
    else if (data.instr.pop.op == MISC_POP_OP) {
-     if (opts.instrs) { 
-       bool multiple = FALSE;
-       cout << "pop ";
-       cout << "{";
-       if (data.instr.pop.reg_list & 1) {
-         cout << "r0";
-         multiple = TRUE;
-       }
-       if (data.instr.pop.reg_list & 2) {
-         if (multiple)
-           cout << ", ";
-         cout << "r1";
-         multiple = TRUE;
-       }
-       if (data.instr.pop.reg_list & 4) {
-         if (multiple)
-           cout << ", ";
-         cout << "r2";
-         multiple = TRUE;
-       }
-       if (data.instr.pop.reg_list & 8) {
-         if (multiple)
-           cout << ", ";
-         cout << "r3";
-         multiple = TRUE;
-       }
-       if (data.instr.pop.reg_list & 16) {
-         if (multiple)
-           cout << ", ";
-         cout << "r4";
-         multiple = TRUE;
-       }
-       if (data.instr.pop.reg_list & 32) {
-         if (multiple)
-           cout << ", ";
-         cout << "r5";
-         multiple = TRUE;
-       }
-       if (data.instr.pop.reg_list & 64) {
-         if (multiple)
-           cout << ", ";
-         cout << "r6";
-         multiple = TRUE;
-       }
-       if (data.instr.pop.reg_list & 128) {
-         if (multiple)
-           cout << ", ";
-         cout << "r7";
-         multiple = TRUE;
-       }
-       if (data.instr.pop.m) {
-         if (multiple)
-           cout << ", ";
-         cout << "pc";
-       }
-       cout << "}" << endl;
-     }
+      if (opts.instrs) { 
+         bool multiple = FALSE;
+         cout << "pop ";
+         cout << "{";
+         if (data.instr.pop.reg_list & 1) {
+            cout << "r0";
+            multiple = TRUE;
+         }
+         if (data.instr.pop.reg_list & 2) {
+            if (multiple)
+               cout << ", ";
+            cout << "r1";
+            multiple = TRUE;
+         }
+         if (data.instr.pop.reg_list & 4) {
+            if (multiple)
+               cout << ", ";
+            cout << "r2";
+            multiple = TRUE;
+         }
+         if (data.instr.pop.reg_list & 8) {
+            if (multiple)
+               cout << ", ";
+            cout << "r3";
+            multiple = TRUE;
+         }
+         if (data.instr.pop.reg_list & 16) {
+            if (multiple)
+               cout << ", ";
+            cout << "r4";
+            multiple = TRUE;
+         }
+         if (data.instr.pop.reg_list & 32) {
+            if (multiple)
+               cout << ", ";
+            cout << "r5";
+            multiple = TRUE;
+         }
+         if (data.instr.pop.reg_list & 64) {
+            if (multiple)
+               cout << ", ";
+            cout << "r6";
+            multiple = TRUE;
+         }
+         if (data.instr.pop.reg_list & 128) {
+            if (multiple)
+               cout << ", ";
+            cout << "r7";
+            multiple = TRUE;
+         }
+         if (data.instr.pop.m) {
+            if (multiple)
+               cout << ", ";
+            cout << "pc";
+         }
+         cout << "}" << endl;
+      }
       return MISC_POP;
    }
    else if (data.instr.sub.op == MISC_SUB_OP) {
