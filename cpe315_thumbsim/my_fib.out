@@ -232,3 +232,39 @@ RF:
 0
 0
 0
+Total number of dynamic instructions: 0
+Total number of cycles: 0
+  RType: 0
+  IType: 0
+  JType: 0
+Number of Memory Reads: 0
+Number of Memory Writes: 0
+Number of Register Reads: 0
+Number of Register Writes: 0
+Number of Forwards: 
+  From Ex Stage: 0
+  From Mem Stage: 0
+Branches: 
+  Forward:
+    Taken: 0
+    Not taken: 0
+  Backward:
+    Taken: 0
+    Not taken: 0
+Branch delay slot: 
+  Useful instruction: 0
+  Not useful instruction: 0
+Jump delay slot: 
+  Useful instruction: 0
+  Not useful instruction: 0
+Load Use Hazard: 
+  Has load use stall: 0
+  Has load use hazard: 0
+  Has no load use hazard: 0
+256 byte cache (blocksize 4 bytes): 0 hits, 0 misses (hit rate: -nan%)
+256 byte cache (blocksize 8 bytes): 0 hits, 0 misses (hit rate: -nan%)
+256 byte cache (blocksize 16 bytes): 0 hits, 0 misses (hit rate: -nan%)
+256 byte cache (blocksize 32 bytes): 0 hits, 0 misses (hit rate: -nan%)
+256 byte cache (blocksize 64 bytes): 0 hits, 0 misses (hit rate: -nan%)
+256 byte cache (blocksize 128 bytes): 0 hits, 0 misses (hit rate: -nan%)
+256 byte cache (blocksize 256 bytes): 0 hits, 0 misses (hit rate: -nan%)

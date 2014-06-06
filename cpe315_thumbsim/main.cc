@@ -6,12 +6,12 @@ Memory<Data8,Data32> dmem(0xffff0000);
 Memory<Data32,Data32> rf(16, Data32(0));
 Register pc;
 Options opts;
+Caches caches(0);
+Stats stats;
 
 int main(int argc, char ** argv) {
   int c;
   string filename;
-  Caches caches(0);
-  Stats stats;
   while ((c = getopt(argc, argv, "pdiwsc:f:")) != -1) {
     switch(c) {
     case 'p':
