@@ -10,6 +10,8 @@ Options opts;
 int main(int argc, char ** argv) {
   int c;
   string filename;
+  Caches caches(0);
+  Stats stats;
   while ((c = getopt(argc, argv, "pdiwsc:f:")) != -1) {
     switch(c) {
     case 'p':
@@ -28,7 +30,7 @@ int main(int argc, char ** argv) {
       opts.stats = true;
       break;
     case 'c':
-      //caches = Caches(atoi(optarg));
+      caches = Caches(atoi(optarg));
       break;
     case 'f':
       filename = optarg;

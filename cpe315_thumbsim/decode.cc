@@ -140,26 +140,27 @@ ALU_Ops decode (const ALU_Type data) {
    }
 
 }
+
 DP_Ops decode (const DP_Type data) {
   cout << "LDM_TYPE" << endl;
-  /*if (data.instr.op == 9) {
+  if (data.instr.DP_Instr.op == 9) {
     if (opts.instrs) { 
-       cout << "rsbs r" << data.instr.rdn  << ", r" << data.instr.rm << ", #0" << endl;
+       cout << "rsbs r" << data.instr.DP_Instr.rdn  << ", r" << data.instr.DP_Instr.rm << ", #0" << endl;
     }
     return DP_RSB;
   }
-  else if (data.instr.op == 5) {
+  else if (data.instr.DP_Instr.op == 5) {
     if (opts.instrs) { 
-       cout << "adcs r" << data.instr.rdn  << ", r" << data.instr.rdn << ", r" << data.instr.rm << endl;
+       cout << "adcs r" << data.instr.DP_Instr.rdn  << ", r" << data.instr.DP_Instr.rdn << ", r" << data.instr.DP_Instr.rm << endl;
     }
     return DP_ADC;
   }
-  else if (data.instr.op == 12) {
+  else if (data.instr.DP_Instr.op == 12) {
     if (opts.instrs) { 
-       cout << "orrs r" << data.instr.rdn  << ", r" << data.instr.rdn << ", r" << data.instr.rm << endl;
+       cout << "orrs r" << data.instr.DP_Instr.rdn  << ", r" << data.instr.DP_Instr.rdn << ", r" << data.instr.DP_Instr.rm << endl;
     }
     return DP_ORR;
-  } */
+  }
 }
 
 SP_Ops decode (const SP_Type data) {
@@ -219,6 +220,12 @@ LD_ST_Ops decode (const LD_ST_Type data) {
       }
    }
    else if (data.instr.class_type.opA == LD_ST_IMMB_OPA) {
+      if ((data.instr.class_type.opB >> 2) == LD_ST_ST) {
+         
+      }
+      else if ((data.instr.class_type.opB >> 2) == LD_ST_LD) {
+         
+      }
    }
    else if (data.instr.class_type.opA == LD_ST_IMMH_OPA) {
    }
