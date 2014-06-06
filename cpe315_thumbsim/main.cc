@@ -65,8 +65,8 @@ int main(int argc, char ** argv) {
   }
 
   if (opts.stats) {
-    //stats.print();
-    //caches.printStats();
+    stats.print();
+    caches.printStats();
   }
 
   return 0;

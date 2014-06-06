@@ -221,10 +221,12 @@ LD_ST_Ops decode (const LD_ST_Type data) {
    }
    else if (data.instr.class_type.opA == LD_ST_IMMB_OPA) {
       if ((data.instr.class_type.opB >> 2) == LD_ST_ST) {
-         
+         cout << "strb r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm*4) << "]" << endl;
+         return STRBI;
       }
       else if ((data.instr.class_type.opB >> 2) == LD_ST_LD) {
-         
+         cout << "ldrb r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm*4) << "]" << endl;
+         return LDRBI;
       }
    }
    else if (data.instr.class_type.opA == LD_ST_IMMH_OPA) {
