@@ -330,29 +330,45 @@ void execute() {
       switch(ldst_ops) {
       case STRR:
          dmem.write(rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4, rf[ld_st.instr.ld_st_imm.rt]);
+         stats.numRegReads += 2;
+         stats.numMemWrites++;
          break;
       case LDRR:
          rf.write(ld_st.instr.ld_st_imm.rt, dmem[rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4]);
+         stats.numRegWrites++;
+         stats.numMemReads++;
          break;
       case STRBR:
          addr = rf[ld_st.instr.ld_st_reg.rn] + rf[ld_st.instr.ld_st_reg.rm];
          temp = dmem[addr];
          temp.set_data_ubyte4(0, rf[ld_st.instr.ld_st_reg.rt] & 0xff);
          dmem.write(addr, temp);
+         stats.numMemWrites++;
+         stats.numRegReads += 3;
+         stats.numMemReads++;
          break;
       case STRBI:
          addr = rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4;
          temp = dmem[addr];
          temp.set_data_ubyte4(0, rf[ld_st.instr.ld_st_imm.rt] & 0xff);
          dmem.write(addr, temp);
+         stats.numMemWrites++;
+         stats.numRegReads += 2;
+         stats.numMemReads++;
          break;
       case LDRBR:
          addr = rf[ld_st.instr.ld_st_reg.rn] + rf[ld_st.instr.ld_st_reg.rm];
          rf.write(ld_st.instr.ld_st_reg.rt, dmem[addr] & 0xff);
+         stats.numRegWrites++;
+         stats.numRegReads += 2;
+         stats.numMemReads++;
          break;
       case LDRBI:
          addr = rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm;
          rf.write(ld_st.instr.ld_st_imm.rt, dmem[addr] & 0xff);
+         stats.numRegWrites++;
+         stats.numRegReads++;
+         stats.numMemReads++;
          break;
       }
       break;
@@ -364,6 +380,7 @@ void execute() {
             rf.write(SP_REG, SP - 4);
             dmem.write(SP, LR);
             stats.numRegWrites++;
+            stats.numMemWrites++;
          }
          for(int i = 7; i >= 0; i--) {
             if(1 << i & misc.instr.push.reg_list) {
@@ -371,6 +388,7 @@ void execute() {
                dmem.write(SP, rf[i]);
                stats.numRegWrites++;
                stats.numRegReads++;
+               stats.numMemWrites++;
             }
          }
          break;
@@ -381,12 +399,14 @@ void execute() {
                rf.write(i, dmem[SP]);
                rf.write(SP_REG, SP + 4);
                stats.numRegWrites++;
+               stats.numMemReads++;
             }
          }
          if (misc.instr.pop.m) {
             rf.write(PC_REG, dmem[SP]);
             rf.write(SP_REG, SP + 4);
             stats.numRegWrites += 2;
+            stats.numMemReads++;
          }
          break;
 
@@ -423,6 +443,7 @@ void execute() {
          if (1 << i & ldm.instr.ldm.reg_list) {
             rf.write(dmem[addri + ndx++ * 4], i);
             stats.numRegWrites++;
+            stats.numMemReads++;
          }
       }
       if (!(1 << ldm.instr.ldm.rn & ldm.instr.ldm.reg_list)) {
@@ -437,6 +458,7 @@ void execute() {
          if (1 << i & stm.instr.stm.reg_list) {
             dmem.write(rf[stm.instr.stm.rn] + ndx++ * 4, rf[i]);
             stats.numRegReads += 2;
+            stats.numMemWrites++;
          }
       }
       rf.write(stm.instr.stm.rn, rf[stm.instr.stm.rn] - ndx * 4);
