@@ -190,12 +190,14 @@ void execute() {
    STM_Type stm(instr);
    LDRL_Type ldrl(instr);
    ADD_SP_Type addsp(instr);
+   BL_Type blupper(instr);
 
    ALU_Ops add_ops;
    DP_Ops dp_ops;
    SP_Ops sp_ops;
    LD_ST_Ops ldst_ops;
    MISC_Ops misc_ops;
+   BL_Ops bl_ops;
 
    rf.write(PC_REG, pctarget);
    stats.numRegReads++;
@@ -546,6 +548,32 @@ void execute() {
       decode(addsp);
       rf.write(addsp.instr.add.rd, SP + (addsp.instr.add.imm*4));
       stats.numRegWrites++;
+      break;
+   case BL:
+      bl_ops = decode(blupper);
+      if (bl_ops == BL_UPPER) {
+         // PC has already been incremented above
+         Data16 instr2 = imem[PC];
+         BL_Type bllower(instr2);
+         if (blupper.instr.bl_upper.s) {
+            addr = static_cast<int>(0xff<<24) | 
+               ((~(bllower.instr.bl_lower.j1 ^ blupper.instr.bl_upper.s))<<23) | 
+               ((~(bllower.instr.bl_lower.j2 ^ blupper.instr.bl_upper.s))<<22) | 
+               ((blupper.instr.bl_upper.imm10)<<12) | 
+               ((bllower.instr.bl_lower.imm11)<<1);
+         }
+         else { 
+            addr = ((blupper.instr.bl_upper.imm10)<<12) | 
+               ((bllower.instr.bl_lower.imm11)<<1); 
+         }
+         // return address is 4-bytes away from the start of the BL insn 
+         rf.write(LR_REG, PC + 2); 
+         // Target address is also computed from that point 
+         rf.write(PC_REG, PC + 2 + addr); 
+      }
+      else {
+         cerr << "Bad BL format." << endl; exit(1); 
+      }
       break;
    default:
       cout << "[ERROR] Unknown Instruction to be executed" << endl;

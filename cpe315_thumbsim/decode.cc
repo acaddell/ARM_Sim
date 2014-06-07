@@ -23,6 +23,7 @@ DP_Ops decode (const DP_Type);
 SP_Ops decode (const SP_Type);
 LD_ST_Ops decode (const LD_ST_Type);
 MISC_Ops decode (const MISC_Type);
+BL_Ops decode (const BL_Type);
 int decode (const COND_Type);
 int decode (const UNCOND_Type);
 int decode (const LDM_Type);
@@ -60,6 +61,9 @@ Thumb_Types decode (const ALL_Types data) {
    }
    else if (data.type.addsp.instr.class_type.type_check == ADD_SP_TYPE) {
       return ADD_SP;
+   }
+   else if (data.type.bl.instr.class_type.type_check == BL_TYPE) {
+      return BL;
    }
    else {
       if (data.type.ld_st.instr.class_type.opA == LD_ST_REG_OPA) {
@@ -238,6 +242,9 @@ SP_Ops decode (const SP_Type data) {
          if (13 == data.instr.mov.rd + data.instr.mov.d * 8) {
             cout << dec << "mov sp, r" << data.instr.mov.rm << endl;
          }
+         else if (13 == data.instr.mov.rm) {
+            cout << dec << "mov r" << data.instr.mov.rd + data.instr.mov.d * 8 << ", sp" << endl;
+         }
          else {
             cout << dec << "mov r" << data.instr.mov.rd + data.instr.mov.d * 8 << ", r" << data.instr.mov.rm << endl;
          }
@@ -296,13 +303,13 @@ LD_ST_Ops decode (const LD_ST_Type data) {
       }
    }
    else if (data.instr.class_type.opA == LD_ST_IMM_OPA) {
-      if (data.instr.class_type.opB == LD_ST_OPB_STR) {
+      if (data.instr.class_type.opB >> 2 == LD_ST_ST) {
          if (opts.instrs) { 
             cout << dec << "str r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm*4) << "]" << endl;
          }
          return STRI;
       }
-      else if (data.instr.class_type.opB == LD_ST_OPB_LDR) {
+      else if (data.instr.class_type.opB >> 2 == LD_ST_LD) {
          if (opts.instrs) { 
             cout << dec << "ldr r" << data.instr.ld_st_imm.rt << ", [r" << data.instr.ld_st_imm.rn << ", #" << setbase(10) << (data.instr.ld_st_imm.imm*4) << "]" << endl;
          }
@@ -515,7 +522,7 @@ int decode (const UNCOND_Type data) {
 
 int decode (const LDM_Type data) {
    if (opts.instrs) {
-      cout << dec << "LDM r" << data.instr.ldm.rn;
+      cout << dec << "ldm r" << data.instr.ldm.rn;
       if (data.instr.ldm.reg_list & 1 << data.instr.ldm.rn) {
          cout << "!";
       }
@@ -530,7 +537,7 @@ int decode (const LDM_Type data) {
             }
          }
       }
-      cout << "}";
+      cout << "}" << endl;
    }
    //cout << "LDM_TYPE" << endl;
    return LDM;
@@ -571,4 +578,12 @@ int decode (const ADD_SP_Type data) {
       cout << dec << "add r" << data.instr.add.rd << ", sp, #" << data.instr.add.imm << endl;
    }
    return ADD_SP;
+}
+
+BL_Ops decode (const BL_Type data) {
+   if (opts.instrs) { 
+      //cout << "bl 0x" << hex << data.instr.bl_upper.imm10 << endl;
+      cout << "bl 0x" << hex << rf[15] + static_cast<unsigned int>(static_cast<int>(data.instr.bl_upper.imm10)) << endl;
+   }
+   return BL_UPPER;
 }
