@@ -16,7 +16,7 @@ using namespace std;
 /* Defines for types and ops for decoding */
 #define ALU_TYPE 0
 #define SP_TYPE 17
-#define DP_TYPE 32
+#define DP_TYPE 16
 #define LD_ST_REG_OPA 5
 #define LD_ST_OPB_STR 0
 #define LD_ST_OPB_STRH 1
