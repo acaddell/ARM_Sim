@@ -10,10 +10,10 @@ movs r3, #0
 str r3, [r7, #4]
 movs r3, #0
 str r3, [r7, #0]
-b 0xa
+b 0x841a
 ldr r3, [r7, #0]
 cmp r3, #9
-ble 0xf1
+ble 0x8404
 ldr r2, [r7, #12]
 ldr r3, [r7, #8]
 adds r3, r2, r3
@@ -27,7 +27,7 @@ adds r3, #1
 str r3, [r7, #0]
 ldr r3, [r7, #0]
 cmp r3, #9
-ble 0xf1
+ble 0x8404
 ldr r2, [r7, #12]
 ldr r3, [r7, #8]
 adds r3, r2, r3
@@ -41,7 +41,7 @@ adds r3, #1
 str r3, [r7, #0]
 ldr r3, [r7, #0]
 cmp r3, #9
-ble 0xf1
+ble 0x8404
 ldr r2, [r7, #12]
 ldr r3, [r7, #8]
 adds r3, r2, r3
@@ -55,7 +55,7 @@ adds r3, #1
 str r3, [r7, #0]
 ldr r3, [r7, #0]
 cmp r3, #9
-ble 0xf1
+ble 0x8404
 ldr r2, [r7, #12]
 ldr r3, [r7, #8]
 adds r3, r2, r3
@@ -69,7 +69,7 @@ adds r3, #1
 str r3, [r7, #0]
 ldr r3, [r7, #0]
 cmp r3, #9
-ble 0xf1
+ble 0x8404
 ldr r2, [r7, #12]
 ldr r3, [r7, #8]
 adds r3, r2, r3
@@ -83,7 +83,7 @@ adds r3, #1
 str r3, [r7, #0]
 ldr r3, [r7, #0]
 cmp r3, #9
-ble 0xf1
+ble 0x8404
 ldr r2, [r7, #12]
 ldr r3, [r7, #8]
 adds r3, r2, r3
@@ -97,7 +97,7 @@ adds r3, #1
 str r3, [r7, #0]
 ldr r3, [r7, #0]
 cmp r3, #9
-ble 0xf1
+ble 0x8404
 ldr r2, [r7, #12]
 ldr r3, [r7, #8]
 adds r3, r2, r3
@@ -111,7 +111,7 @@ adds r3, #1
 str r3, [r7, #0]
 ldr r3, [r7, #0]
 cmp r3, #9
-ble 0xf1
+ble 0x8404
 ldr r2, [r7, #12]
 ldr r3, [r7, #8]
 adds r3, r2, r3
@@ -125,7 +125,7 @@ adds r3, #1
 str r3, [r7, #0]
 ldr r3, [r7, #0]
 cmp r3, #9
-ble 0xf1
+ble 0x8404
 ldr r2, [r7, #12]
 ldr r3, [r7, #8]
 adds r3, r2, r3
@@ -139,7 +139,7 @@ adds r3, #1
 str r3, [r7, #0]
 ldr r3, [r7, #0]
 cmp r3, #9
-ble 0xf1
+ble 0x8404
 ldr r2, [r7, #12]
 ldr r3, [r7, #8]
 adds r3, r2, r3
@@ -153,7 +153,7 @@ adds r3, #1
 str r3, [r7, #0]
 ldr r3, [r7, #0]
 cmp r3, #9
-ble 0xf1
+ble 0x8404
 ldr r3, [r7, #4]
 adds r0, r3, #0
 mov sp, r7
@@ -233,38 +233,21 @@ RF:
 0
 0
 Total number of dynamic instructions: 160
-Total number of cycles: 0
-  RType: 0
-  IType: 0
-  JType: 0
 Number of Memory Reads: 64
 Number of Memory Writes: 46
-Number of Register Reads: 132
-Number of Register Writes: 107
-Number of Forwards: 
-  From Ex Stage: 0
-  From Mem Stage: 0
+Number of Register Reads: 371
+Number of Register Writes: 266
 Branches: 
   Forward:
     Taken: 0
     Not taken: 0
   Backward:
-    Taken: 0
-    Not taken: 0
-Branch delay slot: 
-  Useful instruction: 0
-  Not useful instruction: 0
-Jump delay slot: 
-  Useful instruction: 0
-  Not useful instruction: 0
-Load Use Hazard: 
-  Has load use stall: 0
-  Has load use hazard: 0
-  Has no load use hazard: 0
-256 byte cache (blocksize 4 bytes): 0 hits, 0 misses (hit rate: -nan%)
-256 byte cache (blocksize 8 bytes): 0 hits, 0 misses (hit rate: -nan%)
-256 byte cache (blocksize 16 bytes): 0 hits, 0 misses (hit rate: -nan%)
-256 byte cache (blocksize 32 bytes): 0 hits, 0 misses (hit rate: -nan%)
-256 byte cache (blocksize 64 bytes): 0 hits, 0 misses (hit rate: -nan%)
-256 byte cache (blocksize 128 bytes): 0 hits, 0 misses (hit rate: -nan%)
-256 byte cache (blocksize 256 bytes): 0 hits, 0 misses (hit rate: -nan%)
+    Taken: 10
+    Not taken: 1
+256 byte cache (blocksize 4 bytes): 104 hits, 6 misses (hit rate: 94.5455%)
+256 byte cache (blocksize 8 bytes): 107 hits, 3 misses (hit rate: 97.2727%)
+256 byte cache (blocksize 16 bytes): 108 hits, 2 misses (hit rate: 98.1818%)
+256 byte cache (blocksize 32 bytes): 109 hits, 1 misses (hit rate: 99.0909%)
+256 byte cache (blocksize 64 bytes): 109 hits, 1 misses (hit rate: 99.0909%)
+256 byte cache (blocksize 128 bytes): 109 hits, 1 misses (hit rate: 99.0909%)
+256 byte cache (blocksize 256 bytes): 109 hits, 1 misses (hit rate: 99.0909%)

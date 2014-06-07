@@ -198,6 +198,8 @@ void execute() {
    MISC_Ops misc_ops;
 
    rf.write(PC_REG, pctarget);
+   stats.numRegReads++;
+   stats.numRegWrites++;
    stats.instrs++;
 
    itype = decode(ALL_Types(instr));
@@ -241,6 +243,7 @@ void execute() {
          stats.numRegWrites++;
          break;
       case ALU_MOV:
+         //cout << hex << instr.data_short() << endl;
          rf.write(alu.instr.mov.rdn, alu.instr.mov.imm);
          stats.numRegWrites++;
          break;
@@ -298,6 +301,7 @@ void execute() {
          // Apparently only runs in -O3
          flags.N = rf[dp.instr.DP_Instr.rdn] && rf[dp.instr.DP_Instr.rm] < 0;
          flags.Z = !(rf[dp.instr.DP_Instr.rdn] && rf[dp.instr.DP_Instr.rm]);
+         stats.numRegReads += 2;
          break;
 
       default:
@@ -313,9 +317,10 @@ void execute() {
          stats.numRegWrites++;
          break;
       case SP_CMP:
-         setCarryOverflow(sp.instr.cmp.rd + sp.instr.cmp.d * 8, sp.instr.cmp.rm, OF_SUB);
-         flags.N = sp.instr.cmp.rd + sp.instr.cmp.d * 8 - sp.instr.cmp.rm < 0;
-         flags.Z = sp.instr.cmp.rd + sp.instr.cmp.d * 8 - sp.instr.cmp.rm == 0;
+         setCarryOverflow(rf[sp.instr.cmp.rd + sp.instr.cmp.d * 8], rf[sp.instr.cmp.rm], OF_SUB);
+         flags.N = rf[sp.instr.cmp.rd + sp.instr.cmp.d * 8] - rf[sp.instr.cmp.rm] < 0;
+         flags.Z = rf[sp.instr.cmp.rd + sp.instr.cmp.d * 8] - rf[sp.instr.cmp.rm] == 0;
+         stats.numRegReads += 2;
          break;
       case SP_ADD:
          rf.write(sp.instr.add.rd + sp.instr.add.d * 8, rf[sp.instr.add.rd] + rf[sp.instr.add.rm]);
@@ -334,17 +339,23 @@ void execute() {
       case LDRR:
          break;
       case STRI:
-         dmem.write(rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4, rf[ld_st.instr.ld_st_imm.rt]);
+         addr = rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4;
+         caches.access(addr);
+         dmem.write(addr, rf[ld_st.instr.ld_st_imm.rt]);
          stats.numRegReads += 2;
          stats.numMemWrites++;
          break;
       case LDRI:
-         rf.write(ld_st.instr.ld_st_imm.rt, dmem[rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4]);
+         addr = rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4;
+         caches.access(addr);
+         rf.write(ld_st.instr.ld_st_imm.rt, dmem[addr]);
+         stats.numRegReads++;
          stats.numRegWrites++;
          stats.numMemReads++;
          break;
       case STRBR:
          addr = rf[ld_st.instr.ld_st_reg.rn] + rf[ld_st.instr.ld_st_reg.rm];
+         caches.access(addr);
          temp = dmem[addr];
          temp.set_data_ubyte4(0, rf[ld_st.instr.ld_st_reg.rt] & 0xff);
          dmem.write(addr, temp);
@@ -354,6 +365,7 @@ void execute() {
          break;
       case STRBI:
          addr = rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm * 4;
+         caches.access(addr);
          temp = dmem[addr];
          temp.set_data_ubyte4(0, rf[ld_st.instr.ld_st_imm.rt] & 0xff);
          dmem.write(addr, temp);
@@ -363,6 +375,7 @@ void execute() {
          break;
       case LDRBR:
          addr = rf[ld_st.instr.ld_st_reg.rn] + rf[ld_st.instr.ld_st_reg.rm];
+         caches.access(addr);
          rf.write(ld_st.instr.ld_st_reg.rt, dmem[addr] & 0xff);
          stats.numRegWrites++;
          stats.numRegReads += 2;
@@ -370,6 +383,7 @@ void execute() {
          break;
       case LDRBI:
          addr = rf[ld_st.instr.ld_st_imm.rn] + ld_st.instr.ld_st_imm.imm;
+         caches.access(addr);
          rf.write(ld_st.instr.ld_st_imm.rt, dmem[addr] & 0xff);
          stats.numRegWrites++;
          stats.numRegReads++;
@@ -384,15 +398,18 @@ void execute() {
          if (misc.instr.push.m) {
             rf.write(SP_REG, SP - 4);
             dmem.write(SP, LR);
-            stats.numRegWrites++;
+            caches.access(SP);
+            stats.numRegReads += 2;
+            //stats.numRegWrites++;
             stats.numMemWrites++;
          }
          for(int i = 7; i >= 0; i--) {
             if(1 << i & misc.instr.push.reg_list) {
                rf.write(SP_REG, SP - 4);
                dmem.write(SP, rf[i]);
+               caches.access(SP);
                stats.numRegWrites++;
-               stats.numRegReads++;
+               stats.numRegReads += 2;
                stats.numMemWrites++;
             }
          }
@@ -403,14 +420,18 @@ void execute() {
             if(1 << i & misc.instr.pop.reg_list) {
                rf.write(i, dmem[SP]);
                rf.write(SP_REG, SP + 4);
-               stats.numRegWrites++;
+               caches.access(SP);
+               stats.numRegWrites += 2;
+               stats.numRegReads++;
                stats.numMemReads++;
             }
          }
          if (misc.instr.pop.m) {
             rf.write(PC_REG, dmem[SP]);
+            caches.access(SP);
             rf.write(SP_REG, SP + 4);
-            stats.numRegWrites += 2;
+            //stats.numRegWrites += 2;
+            stats.numRegWrites++;
             stats.numMemReads++;
          }
          break;
@@ -418,41 +439,69 @@ void execute() {
       case MISC_SUB:
          rf.write(SP_REG, SP - (misc.instr.sub.imm*4));
          stats.numRegWrites++;
+         stats.numRegReads++;
          break;
 
       case MISC_ADD:
          rf.write(SP_REG, SP + (misc.instr.add.imm*4));
          stats.numRegWrites++;
+         stats.numRegReads++;
          break;
       }
       break;
    case COND:
       decode(cond);
+      stats.numBranches++;
       // Once you've completed the checkCondition function,
       // this should work for all your conditional branches.
       if (checkCondition(cond.instr.b.cond)){
          rf.write(PC_REG, PC + 2 * signExtend8to32ui(cond.instr.b.imm) + 2);
          stats.numRegWrites++;
+         stats.numRegReads++;
+         if (cond.instr.b.imm > 0) {
+            stats.numBackwardBranchesTaken++;
+         }
+         else if (cond.instr.b.imm < 0) {
+            stats.numForwardBranchesTaken++;
+         }
+      }
+      else {
+         if (cond.instr.b.imm > 0) {
+            stats.numBackwardBranchesNotTaken++;
+         }
+         else if (cond.instr.b.imm < 0) {
+            stats.numForwardBranchesNotTaken++;
+         }
       }
       break;
    case UNCOND:
       decode(uncond);
+      /*stats.numBranches++;
+      if (uncond.instr.b.imm > 0) {
+         stats.numBackwardBranchesTaken++;
+      }
+      else if (uncond.instr.b.imm < 0) {
+         stats.numForwardBranchesTaken++;
+      }*/
       rf.write(PC_REG, PC + 2 * signExtend16to32ui(uncond.instr.b.imm) + 2);
       stats.numRegWrites++;
+      stats.numRegReads++;
       break;
    case LDM:
       ndx = 0;
       decode(ldm);
-      addri = ldm.instr.ldm.rn;
+      addr = rf[ldm.instr.ldm.rn];
       for (int i = 0; i < 8; ++i) {
          if (1 << i & ldm.instr.ldm.reg_list) {
-            rf.write(dmem[addri + ndx++ * 4], i);
+            caches.access(addr + ndx * 4);
+            rf.write(i, dmem[addr + ndx * 4]);
+            ++ndx;
             stats.numRegWrites++;
             stats.numMemReads++;
          }
       }
       if (!(1 << ldm.instr.ldm.rn & ldm.instr.ldm.reg_list)) {
-         rf.write(ldm.instr.ldm.rn, addri + ndx * 4);
+         rf.write(ldm.instr.ldm.rn, addr + ndx * 4);
          stats.numRegWrites++;
       }
       break;
@@ -461,12 +510,14 @@ void execute() {
       decode(stm);
       for (int i = 0; i < 8; ++i) {
          if (1 << i & stm.instr.stm.reg_list) {
-            dmem.write(rf[stm.instr.stm.rn] + ndx++ * 4, rf[i]);
+            addr = rf[stm.instr.stm.rn] + ndx++ * 4;
+            caches.access(addr);
+            dmem.write(addr, rf[i]);
             stats.numRegReads += 2;
             stats.numMemWrites++;
          }
       }
-      rf.write(stm.instr.stm.rn, rf[stm.instr.stm.rn] - ndx * 4);
+      rf.write(stm.instr.stm.rn, rf[stm.instr.stm.rn] + ndx * 4);
       stats.numRegWrites++;
       stats.numRegReads++;
       break;
@@ -479,6 +530,7 @@ void execute() {
       else {
         addr = PC + (ldrl.instr.ldrl.imm)*4;
       }
+      caches.access(addr);
       // Requires two consecutive imem locations pieced together
       temp = imem[addr] | (imem[addr+2]<<16);  // temp is a Data32
       rf.write(ldrl.instr.ldrl.rt, temp);

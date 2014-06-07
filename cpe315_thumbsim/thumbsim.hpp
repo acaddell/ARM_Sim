@@ -56,6 +56,14 @@ using namespace std;
 #define MISC_POP_OP 6
 #define ADD_SP8I_TYPE 22
 
+/*unsigned int signExtend16to32ui(short i) {
+   return static_cast<unsigned int>(static_cast<int>(i));
+}
+
+unsigned int signExtend8to32ui(char i) {
+   return static_cast<unsigned int>(static_cast<int>(i));
+}*/
+
 enum OFType { OF_ADD, OF_SUB, OF_SHIFT };
 
 /* ALU Type Structs */
