@@ -303,6 +303,13 @@ void execute() {
          flags.Z = !(rf[dp.instr.DP_Instr.rdn] && rf[dp.instr.DP_Instr.rm]);
          stats.numRegReads += 2;
          break;
+         
+      case DP_CMP:
+         flags.N = rf[dp.instr.DP_Instr.rdn] - rf[dp.instr.DP_Instr.rm] < 0;
+         flags.Z = !(rf[dp.instr.DP_Instr.rdn] - rf[dp.instr.DP_Instr.rm]);
+         setCarryOverflow(rf[dp.instr.DP_Instr.rdn], rf[dp.instr.DP_Instr.rm], OF_SUB);
+         stats.numRegReads += 2;
+         break;
 
       default:
          break;
@@ -476,13 +483,6 @@ void execute() {
       break;
    case UNCOND:
       decode(uncond);
-      /*stats.numBranches++;
-      if (uncond.instr.b.imm > 0) {
-         stats.numBackwardBranchesTaken++;
-      }
-      else if (uncond.instr.b.imm < 0) {
-         stats.numForwardBranchesTaken++;
-      }*/
       rf.write(PC_REG, PC + 2 * signExtend16to32ui(uncond.instr.b.imm) + 2);
       stats.numRegWrites++;
       stats.numRegReads++;
@@ -549,6 +549,7 @@ void execute() {
       break;
    default:
       cout << "[ERROR] Unknown Instruction to be executed" << endl;
+      cout << itype << endl;
       cout << hex << instr.data_short() << endl;
       exit(1);
       break;

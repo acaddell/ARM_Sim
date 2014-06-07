@@ -151,7 +151,6 @@ ALU_Ops decode (const ALU_Type data) {
 }
 
 DP_Ops decode (const DP_Type data) {
-   //cout << "LDM_TYPE" << endl;
    if (data.instr.DP_Instr.op == 9) {
       if (opts.instrs) { 
          cout << dec << "rsbs r" << data.instr.DP_Instr.rdn  << ", r" << data.instr.DP_Instr.rm << ", #0" << endl;
@@ -207,6 +206,7 @@ DP_Ops decode (const DP_Type data) {
    }
    else if (data.instr.DP_Instr.op == 10) {
       if (opts.instrs) { 
+         cout << dec << "cmp r" << data.instr.DP_Instr.rdn << ", r" << data.instr.DP_Instr.rm << endl;
       }
       return DP_CMP;
    }
